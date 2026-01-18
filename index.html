@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ski Resort Rentals</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <h1>Welcome to Alpine Ski Resort Rentals</h1>
+  </header>
+
+  <main id="rentals">
+    <section>
+      <h2>Available Equipment</h2>
+      <div id="rental-items" aria-live="polite"></div>
+    </section>
+
+    <section>
+      <h2>Discounts</h2>
+      <ul>
+        <li>
+          <strong>Family Package:</strong> 3 or more people renting skis get a
+          <strong>30% discount</strong> on ski rentals.
+        </li>
+        <li>
+          <strong>School Group:</strong> 20 or more people renting any equipment get a
+          <strong>40% discount</strong> on all rentals.
+        </li>
+      </ul>
+    </section>
+
+    <section aria-label="Rental Price Calculator">
+      <label for="renters">Number of Renters:</label>
+      <input type="number" id="renters" name="renters" min="1" value="1" required />
+      <button id="calculateBtn">Calculate Price</button>
+      <p id="result" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p id="offer-message">All rights reserved &copy; Web Developer Zhenya Zhelyazkova</p>
+  </footer>
+
+</body>
+</html>
