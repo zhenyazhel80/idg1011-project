@@ -1,127 +1,103 @@
-// Implementation of the task II.2.a: Use JavaScript class with complex property and DOM output
+'use strict';
 
-document.addEventListener("DOMContentLoaded", function () {
+// Implementation of task II.2.a, II.2.b
+// Class used to create movie objects.
+class Movie {
+  constructor(title, genre, duration, details) {
+    this.title = title;
+    this.genre = genre;
+    this.duration = duration;
+    this.details = details; // complex value: object containing array and price
+  }
 
-    // Class definition for rental items
-    class RentalItem {
-        constructor(name, pricePerDay, tags = []) {
-            this.name = name;
-            this.pricePerDay = pricePerDay;
-            this.tags = tags; // complex property: array
-        }
+  // Method that returns a short description of the movie.
+  getDescription() {
+    return `${this.title} is a ${this.genre} movie lasting ${this.duration} minutes.`;
+  }
 
-        getDescription() {
-            return `${this.name}: $${this.pricePerDay} per day`;
-        }
-    }
+  // Method using built-in String method.
+  getUppercaseTitle() {
+    return this.title.toUpperCase();
+  }
+}
 
-    // Create 5 rental objects
-    const items = [
-        new RentalItem("Skis", 50, ["popular", "family"]),
-        new RentalItem("Snowboard", 45, ["extreme"]),
-        new RentalItem("Ski Poles", 10, ["accessory"]),
-        new RentalItem("Helmet", 15, ["safety"]),
-        new RentalItem("Goggles", 20, ["accessory", "vision"])
-    ];
-
-    const rentalContainer = document.querySelector("#rental-items");
-
-    items.forEach(item => {
-        // Create wrapper
-        const itemDiv = document.createElement("div");
-        itemDiv.classList.add("rental-item");
-
-        // Create checkbox
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.setAttribute("data-price", item.pricePerDay);
-        checkbox.setAttribute("data-name", item.name);
-        checkbox.id = item.name;
-
-        // Create label
-        const label = document.createElement("label");
-        label.setAttribute("for", item.name);
-        label.textContent = item.getDescription();
-
-        // Create reservation button
-        const reserveBtn = document.createElement("button");
-        reserveBtn.textContent = `Book ${item.name}`;
-        reserveBtn.classList.add("reserve-btn");
-
-        // Message element (hidden initially)
-        const message = document.createElement("p");
-        message.classList.add("hidden"); // uses CSS class with display: none;
-
-        // Event listener for reservation button
-        reserveBtn.addEventListener("click", function (e) {
-            // Show confirmation message
-            message.textContent = `${item.name} booked!`;
-            message.classList.remove("hidden");
-
-            // Disable button and update style
-            reserveBtn.disabled = true;
-            reserveBtn.classList.add("disabled");
-
-            // Hide message after 5 seconds
-            setTimeout(() => {
-                message.classList.add("hidden");
-            }, 5000);
-        });
-
-        // Append elements
-        itemDiv.appendChild(checkbox);
-        itemDiv.appendChild(label);
-        itemDiv.appendChild(reserveBtn);
-        itemDiv.appendChild(message);
-        rentalContainer.appendChild(itemDiv);
-    });
-
-    // Handle total price calculation
-    document.querySelector("#calculateBtn").addEventListener("click", function () {
-        const renters = parseInt(document.querySelector("#renters").value);
-        const selectedItems = document.querySelectorAll("input[type='checkbox']:checked");
-        const resultEl = document.querySelector("#result");
-
-        if (isNaN(renters) || renters < 1) {
-            resultEl.textContent = `Please enter a valid number of renters.`;
-            return;
-        }
-
-        if (selectedItems.length === 0) {
-            resultEl.textContent = `Please select at least one rental item.`;
-            return;
-        }
-
-        let totalPrice = 0;
-        let skiRentalIncluded = false;
-
-        selectedItems.forEach(item => {
-            const itemPrice = parseFloat(item.getAttribute("data-price"));
-            const itemName = item.getAttribute("data-name");
-
-            totalPrice += itemPrice * renters;
-
-            if (itemName === "Skis") {
-                skiRentalIncluded = true;
-            }
-        });
-
-        // Discounts
-        if (renters >= 20) {
-            totalPrice *= 0.6; // 40% discount
-        } else if (renters >= 3 && skiRentalIncluded) {
-            const skiItem = items.find(i => i.name === "Skis");
-            if (skiItem) {
-                totalPrice -= (skiItem.pricePerDay * 0.3) * renters; // 30% off skis
-            }
-        }
-
-        resultEl.textContent = `Total price for ${renters} renters: $${totalPrice.toFixed(2)}`;
-    });
-
-    // Footer update
-    const footerMessage = document.querySelector("#offer-message");
-    if (footerMessage) {
-        footerMessage.textContent = `All rights reserved, Web Developer Zhenya Zhelyazkova.`;
-    }
+// Implementation of task II.2.a
+// Create at least three objects using the Movie class.
+const movie1 = new Movie('Northern Lights', 'adventure', 118, {
+  actors: ['Emma Stone', 'Leo Clark'],
+  price: 120,
+  ageLimit: 12,
 });
+
+const movie2 = new Movie('Code Hearts', 'romance comedy', 104, {
+  actors: ['Mia Jones', 'Oliver Reed'],
+  price: 100,
+  ageLimit: 9,
+});
+
+const movie3 = new Movie('Shadow Circuit', 'science fiction', 132, {
+  actors: ['Noah Smith', 'Ella Ray'],
+  price: 140,
+  ageLimit: 15,
+});
+
+const movies = [movie1, movie2, movie3];
+
+// Implementation of task II.3
+// Built-in Date object used to show today's booking date.
+const today = new Date();
+const bookingDate = today.toLocaleDateString('en-GB');
+
+// Implementation of task II.2.c
+// Display information about the objects in the user interface.
+const movieList = document.querySelector('#movieList');
+
+let movieCards = '';
+
+for (let i = 0; i < movies.length; i++) {
+  const movie = movies[i];
+
+  movieCards += `
+    <article class="movie-card">
+      <h2>${movie.getUppercaseTitle()}</h2>
+      <p>${movie.getDescription()}</p>
+      <p><strong>Actors:</strong> ${movie.details.actors.join(', ')}</p>
+      <p><strong>Age limit:</strong> ${movie.details.ageLimit}+</p>
+      <p><strong>Ticket price:</strong> ${movie.details.price} kr</p>
+      <p><strong>Booking date:</strong> ${bookingDate}</p>
+
+      <button class="book-button" data-title="${movie.title}">
+        Book ticket
+      </button>
+
+      <p class="booking-message invisible"></p>
+    </article>
+  `;
+}
+
+movieList.innerHTML = movieCards;
+
+// Implementation of task II.4
+// Add event listeners to all booking buttons.
+const buttons = document.querySelectorAll('.book-button');
+
+for (const button of buttons) {
+  button.addEventListener('click', function (event) {
+    const clickedButton = event.target;
+    const movieTitle = clickedButton.dataset.title;
+
+    const card = clickedButton.parentElement;
+    const message = card.querySelector('.booking-message');
+
+    message.textContent = `Your ticket for "${movieTitle}" is now booked.`;
+    message.className = 'booking-message visible';
+
+    clickedButton.textContent = 'Booked';
+    clickedButton.className = 'book-button booked';
+    clickedButton.disabled = true;
+
+    setTimeout(function () {
+      message.className = 'booking-message invisible';
+    }, 5000);
+  });
+}
